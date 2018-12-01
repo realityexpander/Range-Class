@@ -1,32 +1,48 @@
 var Range = function(start, end, step) {
 
-  this.start = start;
-  this.end = end;
-  this.step = step;
-
+  if (start === undefined )
+    return null;
   if (end === undefined)
     end = start;
   if (step === undefined)
-    step = 1;
-  this.store = [...Array(Math.floor((end-start+step)/step))].map( (n,i) => {
-    return start + i*step;
-  } )
+    if(start > end)
+      step = -1;
+     else
+      step = 1;
+  
+
+  this.start = start;
+  this.end   = end;
+  this.step  = step;
 
 };
 
 Range.prototype.size = function () {
-  return this.store.length;
+  return Math.floor((this.end-this.start+this.step)/this.step);
 };
 
 Range.prototype.each = function (callback) {
-  this.store.map( n => callback(n) );
+  console.log(this.start, this.end, this.step);
+
+  if(this.step > 0) {
+    for( let i = this.start; i <= this.end; i+=this.step)
+      callback(i);
+  } else {
+    for( let i = this.start; i >= this.end; i+=this.step) {
+      callback(i);
+    }
+      
+  }
+  
 };
 
 Range.prototype.includes = function (val) {
-  return this.store.filter( n => n === val );
+  for( let i = this.start; i <= this.end; i+=this.step)
+    if (val === i) return true;
+  return false;
 };
 
-// var justOne = new Range(3, 100, 3);
+// var justOne = new Range(1);
 // console.log(justOne.store);
 // console.log(justOne.size()); //==1
 
@@ -35,17 +51,18 @@ Range.prototype.includes = function (val) {
 // evenDigits.each(function(val){
 //   elements.push(val);
 // });
+// console.log(evenDigits.includes(2)) //True
 // console.log(elements);
 
-var justOne = new Range(1);
-justOne.includes(1).should.eql(true);
-justOne.includes(50).should.eql(false);
+// var justOne = new Range(1);
+// justOne.includes(1).should.eql(true);
+// justOne.includes(50).should.eql(false);
 
-var threes = new Range(3, 100, 3);
-threes.includes(3).should.eql(true);
-threes.includes(4).should.eql(false);
-threes.includes(33).should.eql(true);
-threes.includes(99).should.eql(true);
+// var threes = new Range(3, 100, 3);
+// threes.includes(3).should.eql(true);
+// threes.includes(4).should.eql(false);
+// threes.includes(33).should.eql(true);
+// threes.includes(99).should.eql(true);
 
 
 // var oneToTen = new Range(1, 10);
@@ -57,3 +74,11 @@ threes.includes(99).should.eql(true);
 // };
 // var Range3 = new Range2();
 // console.log( Range3.size() );
+
+
+var countdown = new Range(10, 0, -1);
+var elements = [];
+countdown.each(function(val){
+  elements.push(val);
+});
+console.log(elements); // [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
